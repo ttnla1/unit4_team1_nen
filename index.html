@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Presentation</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      overflow-x: hidden;
+      background: linear-gradient(135deg, #8DEEEE 0%, #B0E2FF 50%, #B0E2FF 100%);
+      min-height: 100%;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 50px;
+    }
+
+    .header h1 {
+      font-size: 48px;
+      margin: 0 0 10px 0;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .header p {
+      font-size: 20px;
+      opacity: 0.9;
+    }
+
+    .nav-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.6);
+      color: #00838f;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 25px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.8);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .nav-btn.active {
+      background: white;
+      color: #00acc1;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+      transform: translateY(-3px);
+    }
+
+    .content-section {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .content-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .section-title {
+      color: #00838f;
+      font-size: 32px;
+      margin: 0 0 30px 0;
+      font-weight: 700;
+      border-bottom: 3px solid #00acc1;
+      padding-bottom: 15px;
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+      margin-top: 30px;
+    }
+
+    .team-member {
+      background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+      color: white;
+      padding: 30px;
+      border-radius: 15px;
+      text-align: center;
+      transition: transform 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .team-member:hover {
+      transform: translateY(-5px);
+    }
+
+    .member-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+    }
+
+    .member-name {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .content-text {
+      font-size: 18px;
+      line-height: 1.8;
+      color: #333;
+      margin: 20px 0;
+    }
+
+    .highlight-box {
+      background: linear-gradient(135deg, rgba(0, 172, 193, 0.1) 0%, rgba(178, 235, 242, 0.2) 100%);
+      border-left: 4px solid #00acc1;
+      padding: 25px;
+      border-radius: 10px;
+      margin: 25px 0;
+    }
+
+    .highlight-box h3 {
+      color: #00838f;
+      margin: 0 0 15px 0;
+      font-size: 24px;
+    }
+
+    .highlight-box p {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.6;
+      color: #00838f;
+    }
+
+    .footer {
+      text-align: center;
+      color: white;
+      margin-top: 50px;
+      padding: 20px;
+      opacity: 0.8;
+    }
+
+    .heritage-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-top: 30px;
+    }
+
+    .heritage-card {
+      background: linear-gradient(135deg, rgba(0, 172, 193, 0.05) 0%, rgba(178, 235, 242, 0.1) 100%);
+      border-radius: 15px;
+      padding: 30px;
+      border: 2px solid #00acc1;
+      transition: all 0.3s ease;
+    }
+
+    .heritage-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 172, 193, 0.3);
+    }
+
+    .heritage-card h3 {
+      color: #00838f;
+      font-size: 22px;
+      margin: 0 0 15px 0;
+    }
+
+    .heritage-card p {
+      color: #00838f;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .icon-large {
+      font-size: 64px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="container">
+   <div class="header">
+    <h1 id="presentation-title">UNIT 4: PRESERVING WORLD HERITAGE</h1>
+    <p id="presentation-subtitle" style="font-size: 28px; font-weight: 700; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">TEAM 1</p>
+   </div>
+   <div class="nav-buttons"><button class="nav-btn active" data-section="home">🏠 Home</button> <button class="nav-btn" data-section="team">👥 Our Team</button> <button class="nav-btn" data-section="about">📚 About Heritage</button> <button class="nav-btn" data-section="importance">⭐ The Issues Being Faced</button> <button class="nav-btn" data-section="action">🌍 Take Action</button>
+   </div>
+   <div id="home" class="content-section active">
+    <h2 class="section-title">🎉 Welcome to Our Presentation 🎉</h2>
+    <div class="content-text">
+     <p style="text-align: center;">✨ Hello, teacher and classmates! We're so happy to see you here today. Welcome to our presentation! ✨</p>
+     <p style="text-align: center; margin-top: 15px;">🎨 We've prepared something special for you — and to make it easier to follow along, we've created this little web app. We hope it helps you explore our topic in a fun and convenient way. Let's enjoy it together! 🚀</p>
+    </div>
+    <div class="highlight-box">
+     <h3>🌟 What You'll Learn 🌟</h3>
+     <p>In this presentation, you'll get to explore the fascinating <strong>Trang An Heritage Complex</strong> — a place where history, nature, and culture beautifully come together. 🎭</p>
+     <p style="margin-top: 15px;"><strong>📖 You'll learn about:</strong></p>
+     <ul style="margin-top: 10px; padding-left: 20px; line-height: 1.8; list-style-type: none;">
+      <li style="margin-bottom: 8px;">📜 Its rich historical background</li>
+      <li style="margin-bottom: 8px;">🏞️ The stunning natural landscapes and cultural treasures that make it unique</li>
+      <li style="margin-bottom: 8px;">⚠️ The challenges and issues this site is currently facing</li>
+      <li style="margin-bottom: 8px;">💡 Some creative ideas and practical solutions to help protect and preserve Trang An for future generations</li>
+     </ul>
+    </div>
+    <div style="text-align: center; font-size: 22px; font-weight: 600; color: #00838f; margin-top: 30px; padding: 25px; background: linear-gradient(135deg, rgba(0, 172, 193, 0.1) 0%, rgba(178, 235, 242, 0.2) 100%); border-radius: 15px; border: 3px dashed #00acc1;">
+     <div style="font-size: 42px; margin-bottom: 15px;">
+      🌍 💚 🤝
+     </div> "Together, we can protect our heritage and preserve the beauty of our world for generations to come!"
+    </div>
+   </div>
+   <div id="team" class="content-section">
+    <h2 id="team-section-title" class="section-title">Meet Our Team</h2>
+    <div class="team-grid">
+     <div class="team-member">
+      <div class="member-icon">
+       👩‍🎓
+      </div>
+      <p class="member-name">Trịnh Thị Ngọc Linh</p>
+   
+      <ul style="text-align: left; margin-top: 15px; padding-left: 20px; font-size: 14px; line-height: 1.6; color: #00838f; list-style-type: '✓ ';">
+       <li style="margin-bottom: 8px;">Create a innovative product to raise awareness about the heritage (find suitable information and postcard templates).</li>
+       <li style="margin-bottom: 8px;">Compile the collected information.</li>
+       <li style="margin-bottom: 8px;">Create and design webapp.</li>
+      </ul>
+     </div>
+     <div class="team-member">
+      <div class="member-icon">
+       👩‍🎓
+      </div>
+      <p class="member-name">Lê Nguyễn Thảo My</p>
+      <ul style="text-align: left; margin-top: 15px; padding-left: 20px; font-size: 14px; line-height: 1.6; color: #00838f; list-style-type: '✓ ';">
+       <li style="margin-bottom: 8px;">Research information about the history of the heritage site.</li>
+       <li style="margin-bottom: 8px;">Create the presentation using Canva.</li>
+      </ul>
+     </div>
+     <div class="team-member">
+      <div class="member-icon">
+       👨‍🎓
+      </div>
+      <p class="member-name">Nguyễn Khắc Hoàng Minh</p>
+      <ul style="text-align: left; margin-top: 15px; padding-left: 20px; font-size: 14px; line-height: 1.6; color: #00838f;list-style-type: '✓ ';">
+       <li style="margin-bottom: 8px;">Find information about: 
+        <ul style="margin-top: 5px; padding-left: 20px; list-style-type: '• ';">
+         <li style="margin-bottom: 5px;">Location</li>
+         <li style="margin-bottom: 5px;">Issues that the heritage site is facing</li>
+         <li style="margin-bottom: 5px;">Ways to improve and protect the heritage</li>
+         <li style="margin-bottom: 5px;">Special features, importance</li>
+         <li style="margin-bottom: 5px;">Biodiversity</li>
+        </ul></li>
+      </ul>
+     </div>
+     <div class="team-member">
+      <div class="member-icon">
+       👨‍🎓
+      </div>
+      <p class="member-name">Tất Tấn Vĩ</p>
+      <ul style="text-align: left; margin-top: 15px; padding-left: 20px; font-size: 14px; line-height: 1.6; color: #00838f; list-style-type: '✓ ';">
+       <li style="margin-bottom: 8px;">Present (act as a tour guide).</li>
+       <li style="margin-bottom: 8px;">Translate the information from Vietnamese to English: 
+        <ul style="margin-top: 5px; padding-left: 20px; list-style-type: '• ';">
+         <li style="margin-bottom: 5px;">History</li>
+         <li style="margin-bottom: 5px;">Location</li>
+         <li style="margin-bottom: 5px;">Issues that the heritage site is facing</li>
+        </ul></li>
+      </ul>
+     </div>
+     <div class="team-member">
+      <div class="member-icon">
+       👨‍🎓
+      </div>
+      <p class="member-name">Nguyễn Huỳnh Gia Bảo</p>
+      <ul style="text-align: left; margin-top: 15px; padding-left: 20px; font-size: 14px; line-height: 1.6; color: #00838f;list-style-type: '✓ ';">
+       <li style="margin-bottom: 8px;">Present (act as a tour guide).</li>
+       <li style="margin-bottom: 8px;">Translate the information from Vietnamese to English: 
+        <ul style="margin-top: 5px; padding-left: 20px; list-style-type: '• ';">
+         <li style="margin-bottom: 5px;">Ways to improve and protect the heritage</li>
+         <li style="margin-bottom: 5px;">Special features, importance</li>
+         <li style="margin-bottom: 5px;">Biodiversity</li>
+        </ul></li>
+      </ul>
+     </div>
+    </div>
+   </div>
+   <div id="about" class="content-section">
+    <h2 id="about-section-title" class="section-title">About World Heritage</h2>
+    <div class="content-text">
+     <p style="text-align: center; color: #999; font-style: italic; padding: 60px 20px;">Content coming soon... 🏛️</p>
+    </div>
+   </div>
+   <div id="importance" class="content-section">
+    <h2 class="section-title">The Issues Being Faced</h2>
+    <div class="content-text">
+     <p style="text-align: center; color: #999; font-style: italic; padding: 60px 20px;">Content coming soon... ⚠️</p>
+    </div>
+   </div>
+   <div id="action" class="content-section">
+    <h2 class="section-title">How You Can Help</h2>
+    <div class="content-text">
+     <p style="text-align: center; color: #999; font-style: italic; padding: 60px 20px;">Content coming soon... 🌟</p>
+    </div>
+   </div>
+   <div class="footer">
+    <p id="footer-text">© 2025 - This webapp was created by the leader of Team 1.</p>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      presentation_title: "UNIT 4: PRESERVING WORLD HERITAGE",
+      presentation_subtitle: "TEAM 1",
+      team_section_title: "Meet Our Team",
+      about_section_title: "About World Heritage",
+      footer_text: "© 2025 - This webapp was created by the leader of Team 1.",
+      background_color: "#e0f7fa",
+      secondary_surface_color: "#ffffff",
+      text_color: "#333333",
+      primary_action_color: "#00acc1",
+      secondary_action_color: "#00838f",
+      font_family: "Segoe UI",
+      font_size: 16
+    };
+
+    async function onConfigChange(config) {
+      const customFont = config.font_family || defaultConfig.font_family;
+      const baseFontStack = 'Tahoma, Geneva, Verdana, sans-serif';
+      const baseSize = config.font_size || defaultConfig.font_size;
+
+      // Update text content
+      document.getElementById('presentation-title').textContent = config.presentation_title || defaultConfig.presentation_title;
+      document.getElementById('presentation-subtitle').textContent = config.presentation_subtitle || defaultConfig.presentation_subtitle;
+      document.getElementById('team-section-title').textContent = config.team_section_title || defaultConfig.team_section_title;
+      document.getElementById('about-section-title').textContent = config.about_section_title || defaultConfig.about_section_title;
+      document.getElementById('footer-text').textContent = config.footer_text || defaultConfig.footer_text;
+
+      // Update colors
+      const backgroundColor = config.background_color || defaultConfig.background_color;
+      const secondarySurfaceColor = config.secondary_surface_color || defaultConfig.secondary_surface_color;
+      const textColor = config.text_color || defaultConfig.text_color;
+      const primaryActionColor = config.primary_action_color || defaultConfig.primary_action_color;
+      const secondaryActionColor = config.secondary_action_color || defaultConfig.secondary_action_color;
+
+      document.body.style.background = `linear-gradient(135deg, ${backgroundColor} 0%, ${primaryActionColor} 100%)`;
+      
+      document.querySelectorAll('.content-section').forEach(section => {
+        section.style.background = secondarySurfaceColor;
+      });
+
+      document.querySelectorAll('.content-text, .heritage-card p, .highlight-box p').forEach(el => {
+        el.style.color = textColor;
+      });
+
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        if (!btn.classList.contains('active')) {
+          btn.style.background = 'rgba(255, 255, 255, 0.6)';
+          btn.style.color = secondaryActionColor;
+        }
+      });
+
+      document.querySelectorAll('.nav-btn.active').forEach(btn => {
+        btn.style.background = secondarySurfaceColor;
+        btn.style.color = primaryActionColor;
+      });
+
+      document.querySelectorAll('.section-title, .heritage-card h3, .highlight-box h3').forEach(el => {
+        el.style.color = secondaryActionColor;
+      });
+
+      document.querySelectorAll('.team-member').forEach(member => {
+        member.style.background = `linear-gradient(135deg, ${backgroundColor} 0%, ${primaryActionColor} 100%)`;
+      });
+
+      // Update fonts
+      document.body.style.fontFamily = `${customFont}, ${baseFontStack}`;
+      
+      document.querySelectorAll('.header h1').forEach(el => {
+        el.style.fontSize = `${baseSize * 3}px`;
+      });
+
+      document.querySelectorAll('.header p').forEach(el => {
+        el.style.fontSize = `${baseSize * 1.75}px`;
+        el.style.fontWeight = '700';
+        el.style.textShadow = '2px 2px 4px rgba(0,0,0,0.3)';
+      });
+
+      document.querySelectorAll('.section-title').forEach(el => {
+        el.style.fontSize = `${baseSize * 2}px`;
+      });
+
+      document.querySelectorAll('.content-text').forEach(el => {
+        el.style.fontSize = `${baseSize * 1.125}px`;
+      });
+
+      document.querySelectorAll('.nav-btn').forEach(el => {
+        el.style.fontSize = `${baseSize}px`;
+      });
+    }
+
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [
+          {
+            get: () => config.background_color || defaultConfig.background_color,
+            set: (value) => {
+              config.background_color = value;
+              window.elementSdk.setConfig({ background_color: value });
+            }
+          },
+          {
+            get: () => config.secondary_surface_color || defaultConfig.secondary_surface_color,
+            set: (value) => {
+              config.secondary_surface_color = value;
+              window.elementSdk.setConfig({ secondary_surface_color: value });
+            }
+          },
+          {
+            get: () => config.text_color || defaultConfig.text_color,
+            set: (value) => {
+              config.text_color = value;
+              window.elementSdk.setConfig({ text_color: value });
+            }
+          },
+          {
+            get: () => config.primary_action_color || defaultConfig.primary_action_color,
+            set: (value) => {
+              config.primary_action_color = value;
+              window.elementSdk.setConfig({ primary_action_color: value });
+            }
+          },
+          {
+            get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+            set: (value) => {
+              config.secondary_action_color = value;
+              window.elementSdk.setConfig({ secondary_action_color: value });
+            }
+          }
+        ],
+        borderables: [],
+        fontEditable: {
+          get: () => config.font_family || defaultConfig.font_family,
+          set: (value) => {
+            config.font_family = value;
+            window.elementSdk.setConfig({ font_family: value });
+          }
+        },
+        fontSizeable: {
+          get: () => config.font_size || defaultConfig.font_size,
+          set: (value) => {
+            config.font_size = value;
+            window.elementSdk.setConfig({ font_size: value });
+          }
+        }
+      };
+    }
+
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ["presentation_title", config.presentation_title || defaultConfig.presentation_title],
+        ["presentation_subtitle", config.presentation_subtitle || defaultConfig.presentation_subtitle],
+        ["team_section_title", config.team_section_title || defaultConfig.team_section_title],
+        ["about_section_title", config.about_section_title || defaultConfig.about_section_title],
+        ["footer_text", config.footer_text || defaultConfig.footer_text]
+      ]);
+    }
+
+    // Navigation functionality
+    document.querySelectorAll('.nav-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        const targetSection = button.getAttribute('data-section');
+        
+        // Update active button
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+          btn.classList.remove('active');
+          if (window.elementSdk && window.elementSdk.config) {
+            const config = window.elementSdk.config;
+            const secondaryActionColor = config.secondary_action_color || defaultConfig.secondary_action_color;
+            btn.style.background = 'rgba(255, 255, 255, 0.6)';
+            btn.style.color = secondaryActionColor;
+            btn.style.transform = 'translateY(0)';
+            btn.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+          }
+        });
+        
+        button.classList.add('active');
+        
+        // Update active section
+        document.querySelectorAll('.content-section').forEach(section => {
+          section.classList.remove('active');
+        });
+        document.getElementById(targetSection).classList.add('active');
+
+        // Reapply active button styles based on current config
+        if (window.elementSdk && window.elementSdk.config) {
+          const config = window.elementSdk.config;
+          const primaryActionColor = config.primary_action_color || defaultConfig.primary_action_color;
+          const secondarySurfaceColor = config.secondary_surface_color || defaultConfig.secondary_surface_color;
+          button.style.background = secondarySurfaceColor;
+          button.style.color = primaryActionColor;
+          button.style.transform = 'translateY(-3px)';
+          button.style.boxShadow = '0 6px 20px rgba(0,0,0,0.25)';
+        }
+      });
+    });
+
+    // Initialize Element SDK
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99ae60b1b16a9624',t:'MTc2MjUzNDczMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+
